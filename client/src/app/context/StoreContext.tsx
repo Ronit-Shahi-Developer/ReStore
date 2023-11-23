@@ -45,3 +45,4 @@ export function StoreProvider({ children }: PropsWithChildren<unknown>) {
     </StoreContext.Provider>
   )
 }
+
