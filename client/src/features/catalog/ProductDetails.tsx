@@ -11,34 +11,38 @@ import {
 } from "@mui/material";
 import { ChangeEvent,  useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Product } from "../../app/models/product";
-import agent from "../../app/api/agent";
+// import { Product } from "../../app/models/product";
+// import agent from "../../app/api/agent";
+// import { useStoreContext } from "../../app/context/StoreContext";
+
 import NotFound from "../../app/api/errors/NotFound";
 import LoadingComponent from "../../app/layout/LoadingComponent";
-// import { useStoreContext } from "../../app/context/StoreContext";
 import { LoadingButton } from "@mui/lab";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
 import {  addBasketItemAsync, removeBasketItemAsync } from "../basket/basketSlice";
+import { fetchProductAsync, productSelectors } from "./catalogSlice";
 
 export default function ProductDetails() {
   // const { basket, setBasket, removeItem} = useStoreContext();
   const {basket, status} = useAppSelector(state => state.basket);
   const dispatch = useAppDispatch();
-  const { id } = useParams<{ id: string }>();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
+  const {id} = useParams<{id: string }>();
+  const product = useAppSelector(state => productSelectors.selectById(state, id));
+  const {status: productStatus} = useAppSelector(state => state.catalog);
+  // const [product, setProduct] = useState<Product | null>(null);
+  // const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(0);
   // const [submitting, setSubmitting] = useState(false);
   const item = basket?.items.find((i) => i.productId === product?.id);
 
   useEffect(() => {
     if (item) setQuantity(item.quantity);
-
-    agent.Catalog.details(parseInt(id))
-      .then((response) => setProduct(response))
-      .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
-  }, [id, item]);
+    if(!product && id) dispatch(fetchProductAsync(parseInt(id)));
+    // agent.Catalog.details(parseInt(id))
+    //   .then((response) => setProduct(response))
+    //   .catch((error) => console.log(error))
+    //   .finally(() => setLoading(false));
+  }, [id, item, dispatch, product]);
 
 function handleInputChange(event: ChangeEvent<HTMLInputElement>){
     if(parseInt(event.currentTarget.value) >= 0){
@@ -68,7 +72,7 @@ function handleUpdateCart(){
 
 
 
-  if (loading)
+  if (productStatus.includes('pending'))
     return <LoadingComponent message="Loading Product"></LoadingComponent>;
   if (!product) return <NotFound></NotFound>;
 
@@ -129,7 +133,7 @@ function handleUpdateCart(){
           <Grid item xs={6}>
             <LoadingButton
             disabled={item?.quantity === quantity || !item && quantity === 0}
-            loading={status.includes('pendingRemoveItem' + item?.productId)}
+            loading={status.includes('pending')}
             onClick={handleUpdateCart}
             sx={{height: '55px'}}
             color='primary'
