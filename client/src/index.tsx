@@ -11,17 +11,18 @@ import { router } from './app/router/Router.tsx';
 // import { configureStore } from './app/store/configureStore.ts';
 import { Provider } from 'react-redux';
 import { store } from './app/store/configureStore.ts';
-import { fetchProductsAsync } from './features/catalog/catalogSlice.ts';
+// import { fetchProductsAsync } from './features/catalog/catalogSlice.ts';
 
 // const store = configureStore();
 
 // store.dispatch(fetchProductsAsync());
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    {/* <StoreProvider> */}
+  // <React.StrictMode>
+ //   {/* <StoreProvider> */}
       <Provider store={store}>
       <RouterProvider router={router} />
       </Provider>
-    {/* </StoreProvider> */}
-  </React.StrictMode>,
+   // {/* </StoreProvider> */}
+  // </React.StrictMode>
+  ,
 )
