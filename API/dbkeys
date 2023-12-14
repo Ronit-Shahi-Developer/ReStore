@@ -1,0 +1,7 @@
+Username:    postgres
+  Password:    N7U9C2nHJniXavU
+  Hostname:    db-restore.internal
+  Flycast:     fdaa:3:e369:0:1::3
+  Proxy port:  5432
+  Postgres port:  5433
+  Connection string: postgres://postgres:N7U9C2nHJniXavU@db-restore.flycast:5432
